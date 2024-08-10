@@ -25,7 +25,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "usart.h"
+#define TAG "freertos"
+#include "elog.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -151,7 +152,8 @@ void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
-  HAL_UART_Transmit(&huart1, (uint8_t*)"Hello World\n", 12, 1000);
+  // debug log, turn on log level: ELOG_LEVEL_DEBUG at main.c
+  elog_d(TAG, "Hello, EasyLogger!");
   for(;;)
   {
     osDelay(1);
