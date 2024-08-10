@@ -49,7 +49,8 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
 
-    # easylogger
+    # Middlewares
+    ## easylogger
     Middlewares/easylogger/src/elog.c
     Middlewares/easylogger/src/elog_utils.c
     Middlewares/easylogger/port/elog_port.c
@@ -59,7 +60,8 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
 
-    # EasyLogger include paths
+    # Middlewares
+    ## EasyLogger include paths
     Middlewares/easylogger/inc
 )
 

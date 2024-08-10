@@ -28,12 +28,21 @@
 
 #include <elog.h>
 #include <stdio.h>
+#include "FreeRTOS.h"
 #include "cmsis_os2.h"
 #include "main.h"
 #include "usart.h"
 
+typedef StaticSemaphore_t osStaticMutexDef_t;
 
-osSemaphoreId_t elog_lockHandle;
+osMutexId_t elog_lockHandle;
+osStaticMutexDef_t elog_lockControlBlock;
+const osMutexAttr_t elog_lock_attributes = {
+  .name = "elog_lock",
+  .attr_bits = osMutexRecursive,
+  .cb_mem = &elog_lockControlBlock,
+  .cb_size = sizeof(elog_lockControlBlock),
+};
 
 
 int serial_send(const uint8_t *data, uint16_t size) {
@@ -57,7 +66,7 @@ ElogErrCode elog_port_init(void) {
     ElogErrCode result = ELOG_NO_ERR;
 
     /* add your code here */
-    elog_lockHandle = osSemaphoreNew(1, 1, NULL);
+    elog_lockHandle = osMutexNew(&elog_lock_attributes);
     if (elog_lockHandle == NULL) {
         result = ELOG_ERR;
     }
@@ -70,7 +79,7 @@ ElogErrCode elog_port_init(void) {
  *
  */
 void elog_port_deinit(void) {
-    osSemaphoreDelete(elog_lockHandle);
+    osMutexDelete(elog_lockHandle);
 }
 
 /**
@@ -87,14 +96,14 @@ void elog_port_output(const char *log, size_t size) {
  * output lock
  */
 void elog_port_output_lock(void) {
-    osSemaphoreAcquire(elog_lockHandle, osWaitForever);
+    osMutexAcquire(elog_lockHandle, osWaitForever);
 }
 
 /**
  * output unlock
  */
 void elog_port_output_unlock(void) {
-    osSemaphoreRelease(elog_lockHandle);
+    osMutexRelease(elog_lockHandle);
 }
 
 /**
@@ -123,5 +132,5 @@ const char *elog_port_get_p_info(void) {
  * @return current thread name
  */
 const char *elog_port_get_t_info(void) {
-    return "";
+    return osThreadGetName(osThreadGetId());
 }
