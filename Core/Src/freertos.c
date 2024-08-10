@@ -25,6 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <string.h>
 #define LOG_TAG "freertos"
 #define LOG_LVL ELOG_LVL_VERBOSE
 #include "elog.h"
@@ -237,7 +238,7 @@ void StartDefaultTask(void *argument)
     // print the information of tasks
     memset(task_info, 0, sizeof(task_info));
     vTaskList(task_info);
-    log_v("Task Info: \n%s\n%s", "Name          State   Priority  Stack   Num", task_info);
+    log_v("Task Info: \n%s\n%s", "Name\t\tState\tPriority\tStack\tNum", task_info);
 
     memset(task_info, 0, sizeof(task_info));
     vTaskGetRunTimeStats(task_info);
