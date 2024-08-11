@@ -378,7 +378,6 @@ ASALocalRun/
 log_file.txt
 .metadata/
 .settings/
-template/
 project.ioc
 mx.scratch
 *.tilen majerle
