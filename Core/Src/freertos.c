@@ -53,7 +53,7 @@ typedef StaticTask_t osStaticThreadDef_t;
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
-uint32_t defaultTaskBuffer[ 256 ];
+uint32_t defaultTaskBuffer[ 1024 ];
 osStaticThreadDef_t defaultTaskControlBlock;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
@@ -92,10 +92,10 @@ __weak void configureTimerForRunTimeStats(void)
         CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
     }
 
-    // 启用DWT计数器
+    // 启用DWT计数�?
     DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
 
-    // 重置计数器
+    // 重置计数�?
     DWT->CYCCNT = 0;
 #endif
 }
@@ -103,7 +103,7 @@ __weak void configureTimerForRunTimeStats(void)
 __weak unsigned long getRunTimeCounterValue(void)
 {
 #ifdef APP_THREAD_INFO
-    // 返回DWT计数器的当前值
+    // 返回DWT计数器的当前�?
     return DWT->CYCCNT;
 #else
     return 0;
