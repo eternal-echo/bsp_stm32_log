@@ -19,7 +19,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 # Set the project name
-set(CMAKE_PROJECT_NAME log)
+set(CMAKE_PROJECT_NAME mpu6050)
 
 # Include toolchain file
 include("cmake/gcc-arm-none-eabi.cmake")
@@ -40,6 +40,11 @@ add_executable(${CMAKE_PROJECT_NAME})
 # Add STM32CubeMX generated sources
 add_subdirectory(cmake/stm32cubemx)
 
+file(GLOB MPU6050_SRCS
+    "BSP/mpu6050/src/*.c"
+    "BSP/mpu6050/interface/*.c"
+)
+
 # Link directories setup
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined library search paths
@@ -48,6 +53,9 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
+
+    # BSP
+    ${MPU6050_SRCS}
 
     # Middlewares
     ## easylogger
@@ -59,6 +67,10 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
+
+    # BSP
+    ${CMAKE_CURRENT_SOURCE_DIR}/BSP/mpu6050/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/BSP/mpu6050/interface
 
     # Middlewares
     ## EasyLogger include paths
