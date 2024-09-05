@@ -54,6 +54,9 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     Middlewares/easylogger/src/elog.c
     Middlewares/easylogger/src/elog_utils.c
     Middlewares/easylogger/port/elog_port.c
+
+    # Utils
+    Utils/delay.c
 )
 
 # Add include paths
@@ -63,6 +66,9 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Middlewares
     ## EasyLogger include paths
     Middlewares/easylogger/inc
+
+    # Utils
+    Utils
 )
 
 # Add project symbols (macros)
