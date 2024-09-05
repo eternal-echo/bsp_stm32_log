@@ -28,7 +28,7 @@
 #include <string.h>
 #define LOG_TAG "freertos"
 #define LOG_LVL ELOG_LVL_VERBOSE
-#include "elog.h"
+#include "util.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -39,7 +39,7 @@ typedef StaticTask_t osStaticThreadDef_t;
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+// #define APP_THREAD_INFO
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -86,6 +86,7 @@ void vApplicationDaemonTaskStartupHook(void);
 /* Functions needed when configGENERATE_RUN_TIME_STATS is on */
 __weak void configureTimerForRunTimeStats(void)
 {
+#ifdef APP_THREAD_INFO
     // 启用DWT外设
     if (!(CoreDebug->DEMCR & CoreDebug_DEMCR_TRCENA_Msk)) {
         CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
@@ -96,12 +97,17 @@ __weak void configureTimerForRunTimeStats(void)
 
     // 重置计数器
     DWT->CYCCNT = 0;
+#endif
 }
 
 __weak unsigned long getRunTimeCounterValue(void)
 {
+#ifdef APP_THREAD_INFO
     // 返回DWT计数器的当前值
     return DWT->CYCCNT;
+#else
+    return 0;
+#endif
 }
 /* USER CODE END 1 */
 
@@ -232,9 +238,11 @@ void StartDefaultTask(void *argument)
   (void) argument;
   // debug log, turn on log level: ELOG_LEVEL_DEBUG at main.c
   log_d("Hello, EasyLogger!");
-  log_d("PI: %f", 3.1415926);
+  // log_d("PI: %f", 3.1415926);
+  delay_test();
   for(;;)
   {
+#ifdef APP_THREAD_INFO
     // print the information of tasks
     memset(task_info, 0, sizeof(task_info));
     vTaskList(task_info);
@@ -243,6 +251,7 @@ void StartDefaultTask(void *argument)
     memset(task_info, 0, sizeof(task_info));
     vTaskGetRunTimeStats(task_info);
     log_v("Task Run Time Info: \n%s\n%s", "Task\t\tRun Time Counter\tPercentage", task_info);    
+#endif
     osDelay(10000);
   }
   /* USER CODE END StartDefaultTask */
