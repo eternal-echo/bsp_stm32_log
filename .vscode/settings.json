@@ -1,8 +1,0 @@
-{
-    "cortex-debug.armToolchainPath": "C:\\ST\\STM32CUBECLT_1.16.0\\GNU-TOOLS-FOR-STM32\\BIN",
-    "files.associations": {
-        "*.ino": "cpp",
-        "*.map": "mapfile",
-        "cstdint": "c"
-    }
-}

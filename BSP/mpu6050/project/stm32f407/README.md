@@ -1,3 +1,73 @@
+# 介绍
+
+## g_gpio_irq 锁
+
+`g_gpio_irq` 是一个全局函数指针，用于处理 MPU6050 传感器产生的中断请求。当 MPU6050 产生中断时，GPIO 引脚会触发一个回调函数，该函数会调用 `g_gpio_irq` 指向的处理函数。这个锁（即 `g_gpio_irq`）的使用情况如下：
+
+### `g_gpio_irq` 的初始化和使用场景
+
+#### 1. **定义和赋值**
+
+```c
+uint8_t (*g_gpio_irq)(void) = NULL;  /**< gpio irq */
+```
+
+`g_gpio_irq` 在初始化时被设置为 `NULL`，表明默认情况下没有任何中断处理程序被注册。
+
+#### 2. **在不同功能测试中的使用**
+
+在运行不同的功能测试时，会根据测试的需求将 `g_gpio_irq` 指向特定的中断处理函数。例如：
+
+- **FIFO 测试中没有使用 `g_gpio_irq`**
+  
+  在 `t_fifo` 测试中，`g_gpio_irq` 不需要特定的中断处理，因此没有设置回调函数，并且函数被设置为 `NULL`：
+
+  ```c
+  g_gpio_irq = NULL;
+  ```
+
+- **DMP 测试中使用 `g_gpio_irq`**
+  
+  在 DMP（Digital Motion Processor）测试中，MPU6050 的中断功能被激活，用来处理 DMP 的数据。在这个场景中，将 `g_gpio_irq` 赋值为 `mpu6050_dmp_read_test_irq_handler`：
+
+  ```c
+  g_gpio_irq = mpu6050_dmp_read_test_irq_handler;
+  ```
+
+  这样当 MPU6050 产生中断时，会调用 `mpu6050_dmp_read_test_irq_handler` 来处理中断。
+
+#### 3. **回调机制**
+
+当 GPIO 引脚接收到来自 MPU6050 的中断信号时，STM32 HAL 会调用 `HAL_GPIO_EXTI_Callback`，此时会检查引脚号是否是预期的中断引脚（如 `GPIO_PIN_0`）。如果是，`g_gpio_irq` 会被调用：
+
+```c
+void HAL_GPIO_EXTI_Callback(uint16_t pin)
+{
+    if (pin == GPIO_PIN_0)
+    {
+        /* 运行互斥模式下的中断 */
+        mutex_irq(g_gpio_irq);
+    }
+}
+```
+
+在这个回调函数中，`mutex_irq` 会执行 `g_gpio_irq` 指向的函数（如果已经注册了中断处理程序），从而在互斥的环境下处理中断，避免竞争条件。
+
+### 典型的使用场景
+
+1. **DMP 测试场景**：
+   
+   当 DMP 被初始化时，`g_gpio_irq` 被赋值为 DMP 专用的中断处理函数，比如 `mpu6050_dmp_read_test_irq_handler`。当 MPU6050 产生 DMP 中断时，`HAL_GPIO_EXTI_Callback` 会被调用，最终触发中断处理函数的执行。
+
+2. **运动测试场景**：
+   
+   在 `t_motion` 测试中，MPU6050 用于检测运动状态。在这种情况下，`g_gpio_irq` 被设置为 `mpu6050_dmp_tap_orient_motion_test_irq_handler`，用于处理运动中断信号。
+
+### 总结
+
+`g_gpio_irq` 是一个可配置的函数指针，用于处理 MPU6050 传感器产生的中断。根据测试的具体类型，`g_gpio_irq` 被动态赋值为对应的中断处理函数。这一设计允许灵活的中断处理机制，从而适应不同的功能需求。
+
+# 官方文档
 ### 1. Chip
 
 #### 1.1 Chip Info

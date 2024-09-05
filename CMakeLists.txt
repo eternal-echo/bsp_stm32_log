@@ -40,11 +40,6 @@ add_executable(${CMAKE_PROJECT_NAME})
 # Add STM32CubeMX generated sources
 add_subdirectory(cmake/stm32cubemx)
 
-file(GLOB MPU6050_SRCS
-    "BSP/mpu6050/src/*.c"
-    "BSP/mpu6050/interface/*.c"
-)
-
 # Link directories setup
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined library search paths
@@ -54,8 +49,16 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
 
+    # APP
+    APP/imu_demo.c
+
     # BSP
-    ${MPU6050_SRCS}
+    BSP/mpu6050/src/driver_mpu6050.c
+    BSP/mpu6050/interface/driver_mpu6050_interface.c
+    BSP/mpu6050/interface/iic.c
+    BSP/mpu6050/example/driver_mpu6050_basic.c
+    BSP/mpu6050/example/driver_mpu6050_dmp.c
+    BSP/mpu6050/example/driver_mpu6050_fifo.c    
 
     # Middlewares
     ## easylogger
@@ -72,8 +75,9 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
 
     # BSP
-    ${CMAKE_CURRENT_SOURCE_DIR}/BSP/mpu6050/src
-    ${CMAKE_CURRENT_SOURCE_DIR}/BSP/mpu6050/interface
+    BSP/mpu6050/src
+    BSP/mpu6050/interface
+    BSP/mpu6050/example
 
     # Middlewares
     ## EasyLogger include paths

@@ -92,10 +92,10 @@ __weak void configureTimerForRunTimeStats(void)
         CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
     }
 
-    // 启用DWT计数�?
+    // 启用DWT计数�?
     DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
 
-    // 重置计数�?
+    // 重置计数�?
     DWT->CYCCNT = 0;
 #endif
 }
@@ -103,7 +103,7 @@ __weak void configureTimerForRunTimeStats(void)
 __weak unsigned long getRunTimeCounterValue(void)
 {
 #ifdef APP_THREAD_INFO
-    // 返回DWT计数器的当前�?
+    // 返回DWT计数器的当前�?
     return DWT->CYCCNT;
 #else
     return 0;
@@ -239,7 +239,8 @@ void StartDefaultTask(void *argument)
   // debug log, turn on log level: ELOG_LEVEL_DEBUG at main.c
   log_d("Hello, EasyLogger!");
   // log_d("PI: %f", 3.1415926);
-  delay_test();
+  extern void imu_demo();
+  imu_demo();
   for(;;)
   {
 #ifdef APP_THREAD_INFO
